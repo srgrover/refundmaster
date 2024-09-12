@@ -1,1 +1,78 @@
-<p>store-form works!</p>
+<section class="bg-white dark:bg-gray-900">
+    <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+        <h2 class="flex items-center justify-between mb-4 text-xl font-bold text-gray-900 dark:text-white">            
+            @if(editMode){
+            Editar tienda {{storeName.value}}
+            <button (click)="showConfirmAlert()" type="button"
+                class="flex items-center px-5 py-2.5 font-medium tracking-wide text-black capitalize rounded-md  hover:bg-red-200 hover:fill-current hover:text-red-600  focus:outline-none  transition duration-300 transform active:scale-95 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px">
+                    <path d="M0 0h24v24H0V0z" fill="none"></path>
+                    <path d="M8 9h8v10H8z" opacity=".3"></path>
+                    <path d="M15.5 4l-1-1h-5l-1 1H5v2h14V4zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9z">
+                    </path>
+                </svg>
+                <span class="pl-2 mx-1">Eliminar</span>
+            </button>            
+            }
+            @else {Añadir nueva tienda}
+        </h2>
+        
+        <form [formGroup]="storeForm" (ngSubmit)="onSubmit(editMode)">
+            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                <div class="sm:col-span-2">
+                    <label for="name"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
+                    <input #storeName type="text" formControlName="name" name="name" id="name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Type product name" required="">
+                    @if(storeForm.get('name')?.invalid && storeForm.get('name')?.touched){
+                    <span class="text-danger">
+                        El nombre es obligatorio.
+                    </span>
+                    }
+                </div>
+                <div class="w-full">
+                    <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Imagen
+                        URL</label>
+                    <input #imageURL type="text" formControlName="image" name="brand" id="brand"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Product brand" required="">
+                </div>
+                
+                @if(imageURL.value){
+                    <img class="h-auto max-w-sm mx-auto rounded-lg" src={{imageURL.value}} alt="image description">
+                }
+
+                <button
+                    class="relative w-full flex justify-center items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize bg-blue-600 rounded-md hover:bg-blue-900  focus:outline-none   transition duration-300 transform active:scale-95 ease-in-out">
+                    <span class="pl-2 mx-1 flex items-center justify-center gap-2">
+                        @if (editMode) {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                            <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M14 4l0 4l-6 0l0 -4" />
+                        </svg>
+                        Guardar cambios
+                        } @else {
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px"
+                            viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+                            <g>
+                                <rect fill="none" height="24" width="24"></rect>
+                            </g>
+                            <g>
+                                <g>
+                                    <path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"></path>
+                                </g>
+                            </g>
+                        </svg>
+                        Agregar tienda
+                        }
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

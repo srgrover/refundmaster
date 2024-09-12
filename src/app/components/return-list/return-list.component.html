@@ -1,1 +1,73 @@
-<p>return-list works!</p>
+<section class="d-flex flex-shrink-0 gap-3 p-3">
+    <div class="flex justify-between items-center w-full">
+        @if(returns !== undefined){
+        <div class="inline-flex items-center text-xl font-semibold text-gray-900 dark:text-white">
+            {{ returns.length }} Producto@if(returns.length > 1){s} devuelto@if(returns.length > 1){s}
+        </div>
+        }
+
+        <button (click)="goToReturnForm()" type="button"
+            class="flex items-center px-5 py-2.5 font-medium tracking-wide text-black capitalize rounded-md  hover:bg-green-200 hover:fill-current hover:text-green-600  focus:outline-none  transition duration-300 transform active:scale-95 ease-in-out">
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24"
+                width="24px" fill="#62C370">
+                <g>
+                    <rect fill="none" height="24" width="24"></rect>
+                </g>
+                <g>
+                    <g>
+                        <path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"></path>
+                    </g>
+                </g>
+            </svg>
+        </button>
+    </div>
+
+    <ul class="max-w divide-y divide-gray-200 dark:divide-gray-700">
+        @for (returnItem of returns; track $index) {
+        <li class="py-3 sm:pb-4">
+            <div class="flex justify-between items-center">
+                <p class="flex items-center gap-1 rtl:space-x-reverse text-sm text-gray-500 truncate dark:text-gray-400">
+                    {{returnItem.store.name}} el 
+                    <small class="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-300">
+                        <span class=" text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-event">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+                                <path d="M16 3l0 4" />
+                                <path d="M8 3l0 4" />
+                                <path d="M4 11l16 0" />
+                                <path d="M8 15h2v2h-2z" />
+                            </svg>
+                        </span>
+                        {{returnItem.createdAt?.toDate() | date:'dd/MM/yyyy'}}
+                    </small>
+                </p>
+                <div>
+                    <span
+                        [ngClass]="{'text-blue-600 dark:text-blue-400': !returnItem.refunded, 'text-green-600 dark:text-green-400': returnItem.refunded}"
+                        class="text-sm text-end text-blue-600 dark:text-blue-400">{{returnItem.refunded ? "Reembolsado" :
+                        "Pendiente"}}</span>
+                    <span></span>
+                </div>
+            </div>
+            @for (product of returnItem.products; track $index) {
+            <div class="flex items-center space-x-3 space-y-3 rtl:space-x-reverse">
+                <a [routerLink]="['/returns', returnItem.id, 'edit']" class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                        <span class="text-gray-400">{{product.quantity}}</span> {{product.name}}
+                    </p>
+                </a>
+                <div class="flex flex-col justify-items-end text-base font-semibold text-gray-900 dark:text-white">
+                    <span class="text-end">
+                        {{ (product.value * product.quantity) | currency: 'EUR' : 'symbol' : '0.2-2' : 'esp' }}
+                    </span>
+
+                </div>
+            </div>
+            }
+        </li>
+        }
+    </ul>
+</section>

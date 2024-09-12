@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, DocumentReference, CollectionReference, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, DocumentReference, CollectionReference, doc, updateDoc, deleteDoc, docData } from '@angular/fire/firestore';
 import { Timestamp } from 'firebase/firestore';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { collectionData } from '@angular/fire/firestore';
+import { AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 export interface Store {
-  id?: string;
+  id: string;
   name: string;
   image?: string;
   createdAt?: Timestamp;
@@ -17,28 +19,35 @@ export interface Store {
 
 export class StoreService {
   private collectionName = 'stores';
-  private storesCollection: CollectionReference<Store>;
+
 
   constructor(private firestore: Firestore) {
-    this.storesCollection = collection(this.firestore, this.collectionName) as CollectionReference<Store>;
   }
 
   getStores(): Observable<Store[]> {
-    return collectionData(this.storesCollection, { idField: 'id' }) as Observable<Store[]>;
+    const storeCollectionRef = collection(this.firestore, this.collectionName);
+    return collectionData(storeCollectionRef, { idField: 'id' }) as Observable<Store[]>;
   }
 
-  async addStore(store: Store): Promise<DocumentReference<Store>> {
+  getStoreById(storeId: string): Observable<Store | undefined> {
+    const storeDocRef = doc(this.firestore, `${this.collectionName}/${storeId}`);
+    return docData(storeDocRef, { idField: 'id' }) as Observable<Store | undefined>;
+  }
+
+  async addStore(store: Store): Promise<void> {
+    const storeCollectionRef = collection(this.firestore, this.collectionName);
     store.createdAt = Timestamp.now();
-    return addDoc(this.storesCollection, store);
+    await addDoc(storeCollectionRef, store);
   }
 
   updateStore(store: Store): Promise<void> {
-    const storeDoc = doc(this.firestore, `${this.collectionName}/${store.id}`);
-    return updateDoc(storeDoc, { ...store });
+    console.log(store)
+    const storeDocRef = doc(this.firestore, `${this.collectionName}/${store.id}`);
+    return updateDoc(storeDocRef, { ...store });
   }
 
   deleteStore(storeId: string): Promise<void> {
-    const storeDoc = doc(this.firestore, `${this.collectionName}/${storeId}`);
-    return deleteDoc(storeDoc);
+    const docRef = doc(this.firestore, `stores/${storeId}`);
+    return deleteDoc(docRef);
   }
 }
